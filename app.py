@@ -632,7 +632,381 @@ elif page == "📊 Đánh giá hồ sơ":
             "🎉 Hồ sơ đã đầy đủ các nội dung quan trọng!"
         )
 
+# =========================================================
+# AI PHỎNG VẤN THÔNG MINH
+# =========================================================
 
+elif page == "🤖 AI Phỏng vấn":
+
+    st.header("🤖 AI INTERVIEW COACH")
+
+    st.markdown("""
+    ### 🎤 Trợ lý phỏng vấn thông minh
+
+    AI sẽ đóng vai **nhà tuyển dụng** và giúp bạn luyện tập
+    trước khi tham gia phỏng vấn thật.
+
+    AI có thể:
+    - 🎯 Đặt câu hỏi phỏng vấn
+    - 💬 Phân tích câu trả lời
+    - ⭐ Chấm điểm câu trả lời
+    - 💡 Gợi ý cách trả lời tốt hơn
+    - 📝 Đưa ra câu trả lời mẫu
+    - 🎤 Mô phỏng một buổi phỏng vấn
+    """)
+
+    st.divider()
+
+    # -----------------------------------------------------
+    # THÔNG TIN ỨNG VIÊN
+    # -----------------------------------------------------
+
+    st.subheader("👤 Thông tin ứng viên")
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+
+        ai_name = st.text_input(
+            "Họ và tên",
+            value=st.session_state.full_name,
+            placeholder="Nguyễn Văn A"
+        )
+
+        ai_job = st.text_input(
+            "Vị trí ứng tuyển",
+            value=st.session_state.job,
+            placeholder="Nhân viên ngân hàng"
+        )
+
+    with col2:
+
+        ai_experience = st.text_area(
+            "Kinh nghiệm",
+            value=st.session_state.experience,
+            height=120,
+            placeholder="Nhập kinh nghiệm làm việc..."
+        )
+
+        ai_skills = st.text_area(
+            "Kỹ năng",
+            value=st.session_state.skills,
+            height=120,
+            placeholder="Giao tiếp, Excel, bán hàng..."
+        )
+
+    st.divider()
+
+    # -----------------------------------------------------
+    # CHỌN LOẠI PHỎNG VẤN
+    # -----------------------------------------------------
+
+    st.subheader("🎯 Chọn loại phỏng vấn")
+
+    interview_type = st.selectbox(
+        "Bạn muốn luyện tập nội dung nào?",
+        [
+            "Phỏng vấn tổng quát",
+            "Phỏng vấn xin việc ngân hàng",
+            "Phỏng vấn nhân viên bán hàng",
+            "Phỏng vấn chăm sóc khách hàng",
+            "Phỏng vấn thực tập sinh",
+            "Phỏng vấn sinh viên mới ra trường",
+            "Phỏng vấn về kỹ năng giao tiếp",
+            "Phỏng vấn về điểm mạnh - điểm yếu",
+            "Phỏng vấn về mức lương"
+        ]
+    )
+
+    difficulty = st.select_slider(
+        "🔥 Độ khó",
+        options=[
+            "Dễ",
+            "Trung bình",
+            "Khó"
+        ],
+        value="Trung bình"
+    )
+
+    st.divider()
+
+    # -----------------------------------------------------
+    # NGÂN HÀNG CÂU HỎI
+    # -----------------------------------------------------
+
+    interview_questions = {
+
+        "Phỏng vấn tổng quát": [
+            "Hãy giới thiệu bản thân của bạn.",
+            "Tại sao bạn muốn ứng tuyển vào vị trí này?",
+            "Điểm mạnh của bạn là gì?",
+            "Điểm yếu của bạn là gì?",
+            "Bạn có kinh nghiệm gì liên quan đến công việc?",
+            "Tại sao chúng tôi nên tuyển bạn?",
+            "Bạn mong muốn mức lương bao nhiêu?",
+            "Bạn định hướng nghề nghiệp trong 3 năm tới như thế nào?"
+        ],
+
+        "Phỏng vấn xin việc ngân hàng": [
+            "Hãy giới thiệu bản thân.",
+            "Tại sao bạn muốn làm việc trong ngành ngân hàng?",
+            "Bạn hiểu gì về vị trí mà bạn đang ứng tuyển?",
+            "Theo bạn, nhân viên ngân hàng cần những kỹ năng gì?",
+            "Nếu khách hàng tức giận, bạn sẽ xử lý như thế nào?",
+            "Nếu khách hàng từ chối sản phẩm, bạn sẽ làm gì?",
+            "Bạn có chịu được áp lực doanh số không?",
+            "Mục tiêu nghề nghiệp của bạn trong 3 năm tới là gì?"
+        ],
+
+        "Phỏng vấn nhân viên bán hàng": [
+            "Hãy giới thiệu bản thân.",
+            "Bạn có kinh nghiệm bán hàng không?",
+            "Bạn sẽ làm gì khi khách hàng không hài lòng?",
+            "Nếu khách hàng nói sản phẩm quá đắt, bạn xử lý thế nào?",
+            "Bạn làm gì để tăng doanh số?",
+            "Bạn có chịu được áp lực KPI không?",
+            "Bạn sẽ tư vấn sản phẩm cho khách hàng như thế nào?"
+        ],
+
+        "Phỏng vấn chăm sóc khách hàng": [
+            "Hãy giới thiệu bản thân.",
+            "Theo bạn chăm sóc khách hàng tốt là gì?",
+            "Bạn sẽ làm gì khi khách hàng nổi giận?",
+            "Nếu không biết câu trả lời của khách hàng, bạn xử lý thế nào?",
+            "Bạn có chịu được áp lực công việc không?",
+            "Điểm mạnh nào giúp bạn phù hợp với vị trí này?"
+        ],
+
+        "Phỏng vấn thực tập sinh": [
+            "Hãy giới thiệu bản thân.",
+            "Tại sao bạn muốn thực tập tại công ty chúng tôi?",
+            "Bạn đã học được những gì ở trường?",
+            "Bạn có kinh nghiệm làm việc nhóm không?",
+            "Điểm mạnh của bạn là gì?",
+            "Bạn mong muốn học hỏi điều gì trong kỳ thực tập?"
+        ],
+
+        "Phỏng vấn sinh viên mới ra trường": [
+            "Hãy giới thiệu bản thân.",
+            "Bạn chưa có nhiều kinh nghiệm, tại sao chúng tôi nên tuyển bạn?",
+            "Bạn đã chuẩn bị gì cho công việc này?",
+            "Bạn có kỹ năng nào nổi bật?",
+            "Bạn mong muốn học hỏi điều gì?",
+            "Mức lương bạn mong muốn là bao nhiêu?"
+        ],
+
+        "Phỏng vấn về kỹ năng giao tiếp": [
+            "Bạn đánh giá khả năng giao tiếp của mình như thế nào?",
+            "Bạn sẽ làm gì khi xảy ra mâu thuẫn với đồng nghiệp?",
+            "Bạn xử lý thế nào khi phải nói chuyện với một khách hàng khó tính?",
+            "Bạn làm gì để thuyết phục người khác?",
+            "Bạn có thích làm việc nhóm không?"
+        ],
+
+        "Phỏng vấn về điểm mạnh - điểm yếu": [
+            "Điểm mạnh lớn nhất của bạn là gì?",
+            "Điểm yếu lớn nhất của bạn là gì?",
+            "Bạn đang làm gì để cải thiện điểm yếu đó?",
+            "Bạn nghĩ đồng nghiệp sẽ nhận xét bạn như thế nào?",
+            "Điều gì khiến bạn tự tin nhất?"
+        ],
+
+        "Phỏng vấn về mức lương": [
+            "Mức lương mong muốn của bạn là bao nhiêu?",
+            "Nếu công ty đưa ra mức lương thấp hơn kỳ vọng, bạn sẽ làm gì?",
+            "Bạn quan tâm đến lương hay cơ hội phát triển hơn?",
+            "Bạn kỳ vọng gì về chế độ đãi ngộ?",
+            "Bạn có sẵn sàng làm việc theo KPI không?"
+        ]
+    }
+
+    questions = interview_questions[interview_type]
+
+    # -----------------------------------------------------
+    # SESSION STATE CHO PHỎNG VẤN
+    # -----------------------------------------------------
+
+    if "interview_index" not in st.session_state:
+        st.session_state.interview_index = 0
+
+    if "interview_answer" not in st.session_state:
+        st.session_state.interview_answer = ""
+
+    if "interview_started" not in st.session_state:
+        st.session_state.interview_started = False
+
+    # -----------------------------------------------------
+    # BẮT ĐẦU
+    # -----------------------------------------------------
+
+    if not st.session_state.interview_started:
+
+        st.info(
+            "💡 Hãy nhấn bắt đầu. AI sẽ đóng vai nhà tuyển dụng "
+            "và lần lượt đưa ra các câu hỏi."
+        )
+
+        if st.button(
+            "🎤 BẮT ĐẦU PHỎNG VẤN",
+            type="primary",
+            use_container_width=True
+        ):
+
+            st.session_state.interview_started = True
+            st.session_state.interview_index = 0
+            st.session_state.interview_answer = ""
+
+            st.rerun()
+
+    # -----------------------------------------------------
+    # ĐANG PHỎNG VẤN
+    # -----------------------------------------------------
+
+    else:
+
+        current_index = st.session_state.interview_index
+
+        if current_index < len(questions):
+
+            question = questions[current_index]
+
+            st.markdown(
+                f"""
+                ### 👔 NHÀ TUYỂN DỤNG
+
+                **Câu hỏi {current_index + 1}/{len(questions)}**
+
+                > {question}
+                """
+            )
+
+            answer = st.text_area(
+                "💬 Câu trả lời của bạn",
+                value=st.session_state.interview_answer,
+                height=180,
+                placeholder="Hãy nhập câu trả lời như khi bạn đang phỏng vấn thật..."
+            )
+
+            col1, col2 = st.columns(2)
+
+            with col1:
+
+                if st.button(
+                    "🔍 PHÂN TÍCH CÂU TRẢ LỜI",
+                    use_container_width=True
+                ):
+
+                    if not answer.strip():
+
+                        st.warning(
+                            "⚠️ Hãy nhập câu trả lời trước."
+                        )
+
+                    else:
+
+                        st.session_state.interview_answer = answer
+
+                        # Chấm điểm cơ bản
+                        word_count = len(answer.split())
+
+                        if word_count >= 80:
+                            point = 9
+                        elif word_count >= 50:
+                            point = 8
+                        elif word_count >= 30:
+                            point = 7
+                        elif word_count >= 15:
+                            point = 6
+                        else:
+                            point = 4
+
+                        st.success(
+                            f"⭐ Điểm tham khảo: {point}/10"
+                        )
+
+                        st.markdown("### 💡 Nhận xét")
+
+                        if word_count < 15:
+
+                            st.warning(
+                                "Câu trả lời hơi ngắn. "
+                                "Bạn nên đưa thêm ví dụ thực tế."
+                            )
+
+                        elif word_count < 30:
+
+                            st.info(
+                                "Câu trả lời khá ổn nhưng "
+                                "nên giải thích rõ hơn."
+                            )
+
+                        else:
+
+                            st.success(
+                                "Câu trả lời có độ dài tốt. "
+                                "Hãy cố gắng nói tự nhiên và đưa ví dụ cụ thể."
+                            )
+
+                        st.markdown("### 🧠 Công thức trả lời gợi ý")
+
+                        st.write(
+                            "**STAR:** Situation → Task → Action → Result"
+                        )
+
+                        st.write(
+                            "Hãy đưa ra hoàn cảnh, nhiệm vụ, "
+                            "cách bạn xử lý và kết quả đạt được."
+                        )
+
+            with col2:
+
+                if st.button(
+                    "➡️ CÂU HỎI TIẾP THEO",
+                    use_container_width=True
+                ):
+
+                    st.session_state.interview_index += 1
+                    st.session_state.interview_answer = ""
+
+                    st.rerun()
+
+        else:
+
+            st.success(
+                "🎉 Bạn đã hoàn thành buổi phỏng vấn!"
+            )
+
+            st.balloons()
+
+            st.markdown("""
+            ### 🏆 Chúc mừng!
+
+            Bạn đã hoàn thành phần luyện tập.
+
+            Hãy nhớ:
+
+            - Trả lời ngắn gọn, rõ ràng.
+            - Không học thuộc câu trả lời một cách máy móc.
+            - Đưa ra ví dụ thực tế.
+            - Giữ thái độ tự tin.
+            - Nhìn vào nhà tuyển dụng khi phỏng vấn trực tiếp.
+            """)
+
+            if st.button(
+                "🔄 PHỎNG VẤN LẠI",
+                use_container_width=True
+            ):
+
+                st.session_state.interview_started = False
+                st.session_state.interview_index = 0
+                st.session_state.interview_answer = ""
+
+                st.rerun()
+
+
+# =========================================================
+# KẾT THÚC AI PHỎNG VẤN
+# =========================================================
 # =========================================================
 # 6. XEM HỒ SƠ
 # =========================================================
