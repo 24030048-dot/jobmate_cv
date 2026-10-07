@@ -1,16 +1,14 @@
 import streamlit as st
-import base64
 import html
 
 # =========================================================
-# CẤU HÌNH
+# CẤU HÌNH APP
 # =========================================================
 
 st.set_page_config(
     page_title="JOBMATE - Hồ sơ xin việc",
     page_icon="💼",
-    layout="wide",
-    initial_sidebar_state="expanded"
+    layout="wide"
 )
 
 # =========================================================
@@ -21,118 +19,76 @@ st.markdown("""
 <style>
 
 .stApp {
-    background: linear-gradient(135deg, #f7f9fc 0%, #eef3ff 100%);
+    background: linear-gradient(135deg, #f5f7fb, #edf2ff);
 }
 
 .block-container {
-    max-width: 1250px;
+    max-width: 1200px;
     padding-top: 2rem;
     padding-bottom: 4rem;
 }
 
 .hero {
-    background: linear-gradient(135deg, #111827, #334155);
+    background: linear-gradient(135deg, #111827, #374151);
     padding: 35px;
     border-radius: 24px;
     color: white;
     margin-bottom: 25px;
-    box-shadow: 0 12px 35px rgba(0,0,0,0.12);
 }
 
-.hero h1 {
-    font-size: 46px;
+.hero-title {
+    font-size: 45px;
+    font-weight: 800;
     margin-bottom: 5px;
-    font-weight: 800;
 }
 
-.hero p {
+.hero-subtitle {
     font-size: 18px;
-    opacity: 0.9;
 }
 
-.section-title {
-    font-size: 27px;
-    font-weight: 800;
-    margin-top: 15px;
-    margin-bottom: 20px;
-}
-
-.cv-card {
+.cv-box {
     background: white;
-    border-radius: 20px;
     padding: 35px;
+    border-radius: 20px;
+    border: 1px solid #dfe3ea;
     box-shadow: 0 8px 30px rgba(0,0,0,0.08);
-    border: 1px solid #e5e7eb;
-}
-
-.cv-header {
-    display: flex;
-    gap: 30px;
-    align-items: center;
-    border-bottom: 2px solid #111827;
-    padding-bottom: 25px;
-    margin-bottom: 25px;
-}
-
-.cv-photo {
-    width: 150px;
-    height: 180px;
-    object-fit: cover;
-    border-radius: 12px;
-    border: 3px solid #111827;
 }
 
 .cv-name {
     font-size: 34px;
     font-weight: 800;
-    margin-bottom: 5px;
 }
 
 .cv-job {
     font-size: 20px;
     font-weight: 600;
-    margin-bottom: 15px;
-}
-
-.cv-contact {
-    line-height: 1.8;
+    margin-bottom: 12px;
 }
 
 .cv-section {
+    font-size: 20px;
+    font-weight: 800;
+    border-bottom: 2px solid #222;
+    padding-bottom: 7px;
     margin-top: 25px;
-}
-
-.cv-section h3 {
-    border-bottom: 2px solid #111827;
-    padding-bottom: 8px;
-    font-size: 19px;
+    margin-bottom: 12px;
 }
 
 .score-box {
     background: white;
-    padding: 25px;
-    border-radius: 18px;
+    padding: 30px;
+    border-radius: 20px;
     text-align: center;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.07);
+    border: 1px solid #ddd;
 }
 
 .score-number {
     font-size: 55px;
-    font-weight: 900;
+    font-weight: 800;
 }
 
-.tip {
-    background: #f8fafc;
-    border-left: 5px solid #334155;
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 10px;
-}
-
-.footer {
-    text-align: center;
+.small-note {
     color: #64748b;
-    margin-top: 35px;
 }
 
 </style>
@@ -143,64 +99,33 @@ st.markdown("""
 # SESSION STATE
 # =========================================================
 
-defaults = {
-
+default_values = {
     "full_name": "",
     "birthday": "",
-    "gender": "",
+    "gender": "Chưa chọn",
     "phone": "",
     "email": "",
     "address": "",
     "job": "",
-    "salary": 0,
     "career_goal": "",
     "about": "",
-
     "school": "",
     "major": "",
     "education_time": "",
     "gpa": 0.0,
-
     "experience": "",
     "skills": "",
     "languages": "",
     "certificates": "",
     "achievements": "",
-
-    "photo": None
+    "salary": 0,
+    "photo_bytes": None,
+    "photo_type": None
 }
 
-for key, value in defaults.items():
-
+for key, value in default_values.items():
     if key not in st.session_state:
         st.session_state[key] = value
-
-
-# =========================================================
-# HÀM ESCAPE HTML
-# =========================================================
-
-def safe(value):
-
-    return html.escape(str(value or ""))
-
-
-# =========================================================
-# ẢNH
-# =========================================================
-
-def image_to_base64(uploaded_file):
-
-    if uploaded_file is None:
-        return None
-
-    data = uploaded_file.getvalue()
-
-    encoded = base64.b64encode(data).decode()
-
-    file_type = uploaded_file.type
-
-    return f"data:{file_type};base64,{encoded}"
 
 
 # =========================================================
@@ -210,10 +135,15 @@ def image_to_base64(uploaded_file):
 st.markdown("""
 <div class="hero">
 
-<h1>💼 JOBMATE</h1>
+<div class="hero-title">💼 JOBMATE</div>
+
+<div class="hero-subtitle">
+HỒ SƠ XIN VIỆC THÔNG MINH
+</div>
 
 <p>
-Hồ sơ xin việc thông minh – tạo CV chuyên nghiệp chỉ trong vài phút
+Tạo hồ sơ xin việc chuyên nghiệp, đánh giá hồ sơ
+và xác định mức lương mong muốn.
 </p>
 
 </div>
@@ -225,11 +155,10 @@ Hồ sơ xin việc thông minh – tạo CV chuyên nghiệp chỉ trong vài p
 # =========================================================
 
 st.sidebar.title("💼 JOBMATE")
-
 st.sidebar.caption("HỒ SƠ XIN VIỆC THÔNG MINH")
 
 page = st.sidebar.radio(
-    "📌 CHỌN CHỨC NĂNG",
+    "📌 CHỨC NĂNG",
     [
         "👤 Thông tin cá nhân",
         "🎓 Học vấn",
@@ -243,8 +172,8 @@ page = st.sidebar.radio(
 st.sidebar.divider()
 
 st.sidebar.info(
-    "💡 Nhập thông tin ở các mục bên trái. "
-    "Sau đó vào **Xem hồ sơ** để kiểm tra CV."
+    "Nhập thông tin ở từng mục. "
+    "Sau đó chọn **📄 Xem hồ sơ** để xem CV."
 )
 
 
@@ -254,72 +183,72 @@ st.sidebar.info(
 
 if page == "👤 Thông tin cá nhân":
 
-    st.markdown(
-        '<div class="section-title">👤 THÔNG TIN CÁ NHÂN</div>',
-        unsafe_allow_html=True
-    )
+    st.header("👤 THÔNG TIN CÁ NHÂN")
 
-    col1, col2 = st.columns([1, 2])
+    col_photo, col_info = st.columns([1, 2])
 
-    with col1:
+    with col_photo:
 
         st.subheader("📷 Ảnh hồ sơ")
 
-        photo = st.file_uploader(
+        uploaded_photo = st.file_uploader(
             "Tải ảnh chân dung",
-            type=["jpg", "jpeg", "png"],
-            help="Nên dùng ảnh rõ mặt, nền đơn giản."
+            type=["jpg", "jpeg", "png"]
         )
 
-        if photo is not None:
+        if uploaded_photo is not None:
 
-            st.session_state.photo = photo
-
-            st.image(
-                photo,
-                width=220,
-                caption="Ảnh hồ sơ"
-            )
-
-        elif st.session_state.photo is not None:
+            st.session_state.photo_bytes = uploaded_photo.getvalue()
+            st.session_state.photo_type = uploaded_photo.type
 
             st.image(
-                st.session_state.photo,
-                width=220,
-                caption="Ảnh hiện tại"
+                st.session_state.photo_bytes,
+                width=220
             )
 
-    with col2:
+        elif st.session_state.photo_bytes is not None:
 
-        st.subheader("📝 Thông tin")
+            st.image(
+                st.session_state.photo_bytes,
+                width=220
+            )
 
-        name = st.text_input(
+        st.caption(
+            "Nên sử dụng ảnh rõ mặt, nghiêm túc và nền đơn giản."
+        )
+
+    with col_info:
+
+        st.subheader("📝 Thông tin cá nhân")
+
+        full_name = st.text_input(
             "Họ và tên *",
             value=st.session_state.full_name,
-            placeholder="Ví dụ: Nguyễn Văn A"
+            placeholder="Nguyễn Văn A"
         )
 
         birthday = st.text_input(
             "Ngày sinh",
             value=st.session_state.birthday,
-            placeholder="DD/MM/YYYY"
+            placeholder="09/06/2006"
         )
+
+        gender_options = [
+            "Chưa chọn",
+            "Nam",
+            "Nữ",
+            "Khác"
+        ]
+
+        current_gender = st.session_state.gender
+
+        if current_gender not in gender_options:
+            current_gender = "Chưa chọn"
 
         gender = st.selectbox(
             "Giới tính",
-            [
-                "Chưa chọn",
-                "Nam",
-                "Nữ",
-                "Khác"
-            ],
-            index=(
-                ["Chưa chọn", "Nam", "Nữ", "Khác"]
-                .index(st.session_state.gender)
-                if st.session_state.gender in
-                ["Chưa chọn", "Nam", "Nữ", "Khác"]
-                else 0
-            )
+            gender_options,
+            index=gender_options.index(current_gender)
         )
 
         phone = st.text_input(
@@ -343,7 +272,7 @@ if page == "👤 Thông tin cá nhân":
     st.divider()
 
     job = st.text_input(
-        "🎯 Vị trí ứng tuyển *",
+        "🎯 Vị trí muốn ứng tuyển *",
         value=st.session_state.job,
         placeholder="Ví dụ: Nhân viên ngân hàng"
     )
@@ -352,20 +281,14 @@ if page == "👤 Thông tin cá nhân":
         "🎯 Mục tiêu nghề nghiệp",
         value=st.session_state.career_goal,
         height=120,
-        placeholder=(
-            "Ví dụ: Mong muốn phát triển trong lĩnh vực "
-            "Tài chính - Ngân hàng..."
-        )
+        placeholder="Viết mục tiêu nghề nghiệp của bạn..."
     )
 
     about = st.text_area(
         "✨ Giới thiệu bản thân",
         value=st.session_state.about,
         height=150,
-        placeholder=(
-            "Hãy giới thiệu ngắn gọn về bản thân, "
-            "điểm mạnh và định hướng nghề nghiệp..."
-        )
+        placeholder="Giới thiệu ngắn gọn về bản thân..."
     )
 
     if st.button(
@@ -374,7 +297,7 @@ if page == "👤 Thông tin cá nhân":
         use_container_width=True
     ):
 
-        st.session_state.full_name = name
+        st.session_state.full_name = full_name
         st.session_state.birthday = birthday
         st.session_state.gender = gender
         st.session_state.phone = phone
@@ -393,21 +316,18 @@ if page == "👤 Thông tin cá nhân":
 
 elif page == "🎓 Học vấn":
 
-    st.markdown(
-        '<div class="section-title">🎓 HỌC VẤN</div>',
-        unsafe_allow_html=True
-    )
+    st.header("🎓 HỌC VẤN")
 
     school = st.text_input(
         "🏫 Tên trường",
         value=st.session_state.school,
-        placeholder="Ví dụ: Đại học ABC"
+        placeholder="Đại học ABC"
     )
 
     major = st.text_input(
         "📚 Chuyên ngành",
         value=st.session_state.major,
-        placeholder="Ví dụ: Tài chính - Ngân hàng"
+        placeholder="Tài chính - Ngân hàng"
     )
 
     education_time = st.text_input(
@@ -421,13 +341,7 @@ elif page == "🎓 Học vấn":
         min_value=0.0,
         max_value=4.0,
         value=float(st.session_state.gpa),
-        step=0.1,
-        format="%.1f"
-    )
-
-    st.info(
-        "💡 Nếu trường bạn sử dụng thang điểm 10, "
-        "bạn có thể ghi GPA vào phần mô tả thay vì ô này."
+        step=0.1
     )
 
     if st.button(
@@ -450,37 +364,34 @@ elif page == "🎓 Học vấn":
 
 elif page == "💼 Kinh nghiệm & kỹ năng":
 
-    st.markdown(
-        '<div class="section-title">💼 KINH NGHIỆM & KỸ NĂNG</div>',
-        unsafe_allow_html=True
-    )
+    st.header("💼 KINH NGHIỆM & KỸ NĂNG")
 
     experience = st.text_area(
         "💼 Kinh nghiệm làm việc",
         value=st.session_state.experience,
         height=220,
-        placeholder=(
-            "Ví dụ:\n"
-            "• Công ty ABC – Nhân viên bán hàng\n"
-            "• 06/2025 - 08/2026\n"
-            "• Tư vấn khách hàng\n"
-            "• Quản lý hàng hóa\n"
-            "• Đạt KPI..."
-        )
+        placeholder="""Ví dụ:
+
+Công ty ABC
+Vị trí: Nhân viên bán hàng
+Thời gian: 06/2025 - 08/2026
+
+- Tư vấn khách hàng
+- Quản lý hàng hóa
+- Đạt KPI doanh số"""
     )
 
     skills = st.text_area(
         "🛠️ Kỹ năng",
         value=st.session_state.skills,
         height=150,
-        placeholder=(
-            "Ví dụ:\n"
-            "• Giao tiếp\n"
-            "• Làm việc nhóm\n"
-            "• Excel\n"
-            "• Bán hàng\n"
-            "• Chăm sóc khách hàng"
-        )
+        placeholder="""Ví dụ:
+
+- Giao tiếp
+- Làm việc nhóm
+- Excel
+- Bán hàng
+- Chăm sóc khách hàng"""
     )
 
     languages = st.text_area(
@@ -494,14 +405,14 @@ elif page == "💼 Kinh nghiệm & kỹ năng":
         "📜 Chứng chỉ",
         value=st.session_state.certificates,
         height=100,
-        placeholder="Ví dụ: MOS Excel, TOEIC, HSK..."
+        placeholder="Ví dụ: MOS, TOEIC, HSK..."
     )
 
     achievements = st.text_area(
         "🏆 Thành tích",
         value=st.session_state.achievements,
-        height=120,
-        placeholder="Ví dụ: Nhân viên xuất sắc, đạt giải cuộc thi..."
+        height=100,
+        placeholder="Ví dụ: Nhân viên xuất sắc, giải cuộc thi..."
     )
 
     if st.button(
@@ -525,14 +436,10 @@ elif page == "💼 Kinh nghiệm & kỹ năng":
 
 elif page == "💰 Mức lương mong muốn":
 
-    st.markdown(
-        '<div class="section-title">💰 MỨC LƯƠNG MONG MUỐN</div>',
-        unsafe_allow_html=True
-    )
+    st.header("💰 MỨC LƯƠNG MONG MUỐN")
 
     st.write(
-        "Nhập mức lương bạn mong muốn bằng bàn phím. "
-        "Không còn phần tiết kiệm."
+        "Nhập trực tiếp mức lương bằng bàn phím."
     )
 
     salary = st.number_input(
@@ -543,14 +450,10 @@ elif page == "💰 Mức lương mong muốn":
         format="%d"
     )
 
-    st.caption(
-        "Ví dụ: nhập 8000000 nếu mong muốn mức lương 8 triệu đồng/tháng."
-    )
-
     if salary > 0:
 
-        st.metric(
-            "Mức lương mong muốn",
+        st.success(
+            f"💰 Mức lương mong muốn: "
             f"{salary:,.0f} VNĐ/tháng"
         )
 
@@ -562,7 +465,7 @@ elif page == "💰 Mức lương mong muốn":
 
         st.session_state.salary = salary
 
-        st.success("✅ Đã lưu mức lương mong muốn!")
+        st.success("✅ Đã lưu mức lương!")
 
 
 # =========================================================
@@ -571,64 +474,45 @@ elif page == "💰 Mức lương mong muốn":
 
 elif page == "📊 Đánh giá hồ sơ":
 
-    st.markdown(
-        '<div class="section-title">📊 ĐÁNH GIÁ HỒ SƠ</div>',
-        unsafe_allow_html=True
-    )
+    st.header("📊 ĐÁNH GIÁ HỒ SƠ")
 
     score = 0
-    details = []
 
     # Thông tin cá nhân: 20
-    personal = 0
+    personal_score = 0
 
     if st.session_state.full_name:
-        personal += 5
+        personal_score += 5
 
     if st.session_state.phone:
-        personal += 5
+        personal_score += 5
 
     if st.session_state.email:
-        personal += 5
+        personal_score += 5
 
-    if st.session_state.photo:
-        personal += 5
+    if st.session_state.photo_bytes:
+        personal_score += 5
 
-    score += personal
-
-    details.append(
-        ("👤 Thông tin cá nhân", personal, 20)
-    )
+    score += personal_score
 
     # Học vấn: 20
-    education = 0
+    education_score = 0
 
     if st.session_state.school:
-        education += 7
+        education_score += 7
 
     if st.session_state.major:
-        education += 7
+        education_score += 7
 
     if st.session_state.gpa > 0:
-        education += 6
+        education_score += 6
 
-    score += education
-
-    details.append(
-        ("🎓 Học vấn", education, 20)
-    )
+    score += education_score
 
     # Kinh nghiệm: 20
-    experience_score = 0
-
-    if st.session_state.experience:
-        experience_score += 20
+    experience_score = 20 if st.session_state.experience else 0
 
     score += experience_score
-
-    details.append(
-        ("💼 Kinh nghiệm", experience_score, 20)
-    )
 
     # Kỹ năng: 20
     skill_score = 0
@@ -641,24 +525,16 @@ elif page == "📊 Đánh giá hồ sơ":
 
     score += skill_score
 
-    details.append(
-        ("🛠️ Kỹ năng & ngoại ngữ", skill_score, 20)
-    )
-
-    # Bổ sung: 20
-    extra = 0
+    # Chứng chỉ + thành tích: 20
+    extra_score = 0
 
     if st.session_state.certificates:
-        extra += 10
+        extra_score += 10
 
     if st.session_state.achievements:
-        extra += 10
+        extra_score += 10
 
-    score += extra
-
-    details.append(
-        ("🏆 Chứng chỉ & thành tích", extra, 20)
-    )
+    score += extra_score
 
     col1, col2 = st.columns([1, 2])
 
@@ -667,8 +543,13 @@ elif page == "📊 Đánh giá hồ sơ":
         st.markdown(
             f"""
             <div class="score-box">
-                <div>ĐIỂM HỒ SƠ</div>
-                <div class="score-number">{score}/100</div>
+
+            <div>ĐIỂM HỒ SƠ</div>
+
+            <div class="score-number">
+            {score}/100
+            </div>
+
             </div>
             """,
             unsafe_allow_html=True
@@ -685,76 +566,71 @@ elif page == "📊 Đánh giá hồ sơ":
         elif score >= 70:
 
             st.info(
-                "👍 HỒ SƠ KHÁ TỐT – Có thể bổ sung thêm để nổi bật."
+                "👍 HỒ SƠ KHÁ TỐT – Có thể bổ sung thêm."
             )
 
         elif score >= 50:
 
             st.warning(
-                "⚠️ HỒ SƠ CẦN BỔ SUNG – Một số phần còn thiếu."
+                "⚠️ HỒ SƠ CẦN BỔ SUNG."
             )
 
         else:
 
             st.error(
-                "❗ HỒ SƠ CHƯA ĐỦ THÔNG TIN."
+                "❗ HỒ SƠ CÒN THIẾU NHIỀU THÔNG TIN."
             )
 
     st.divider()
 
     st.subheader("📋 Chi tiết điểm")
 
-    for title, got, maximum in details:
+    score_items = [
+        ("👤 Thông tin cá nhân", personal_score, 20),
+        ("🎓 Học vấn", education_score, 20),
+        ("💼 Kinh nghiệm", experience_score, 20),
+        ("🛠️ Kỹ năng & ngoại ngữ", skill_score, 20),
+        ("🏆 Chứng chỉ & thành tích", extra_score, 20)
+    ]
+
+    for title, got, maximum in score_items:
 
         st.write(
             f"**{title}: {got}/{maximum} điểm**"
         )
 
-        st.progress(got / maximum)
-
-    st.subheader("💡 Gợi ý cải thiện")
-
-    suggestions = []
-
-    if not st.session_state.photo:
-        suggestions.append(
-            "📷 Tải ảnh chân dung chuyên nghiệp."
+        st.progress(
+            got / maximum
         )
+
+    st.subheader("💡 Gợi ý")
+
+    if not st.session_state.photo_bytes:
+        st.write("📷 Tải ảnh hồ sơ.")
 
     if not st.session_state.experience:
-        suggestions.append(
-            "💼 Bổ sung kinh nghiệm làm việc hoặc hoạt động thực tế."
-        )
+        st.write("💼 Bổ sung kinh nghiệm.")
 
     if not st.session_state.skills:
-        suggestions.append(
-            "🛠️ Bổ sung các kỹ năng nổi bật."
-        )
+        st.write("🛠️ Bổ sung kỹ năng.")
 
     if not st.session_state.languages:
-        suggestions.append(
-            "🌐 Bổ sung trình độ ngoại ngữ nếu có."
-        )
+        st.write("🌐 Bổ sung ngoại ngữ.")
 
     if not st.session_state.certificates:
-        suggestions.append(
-            "📜 Bổ sung chứng chỉ liên quan đến vị trí ứng tuyển."
-        )
+        st.write("📜 Bổ sung chứng chỉ.")
 
-    if not suggestions:
+    if (
+        st.session_state.photo_bytes
+        and st.session_state.experience
+        and st.session_state.skills
+        and st.session_state.languages
+        and st.session_state.certificates
+    ):
 
         st.success(
-            "🎉 Hồ sơ của bạn đã có đầy đủ các phần quan trọng!"
+            "🎉 Hồ sơ đã đầy đủ các nội dung quan trọng!"
         )
-
-    else:
-
-        for suggestion in suggestions:
-
-            st.markdown(
-                f'<div class="tip">{suggestion}</div>',
-                unsafe_allow_html=True
-            )
 
 
 # =========================================================
@@ -763,414 +639,330 @@ elif page == "📊 Đánh giá hồ sơ":
 
 elif page == "📄 Xem hồ sơ":
 
-    st.markdown(
-        '<div class="section-title">📄 HỒ SƠ XIN VIỆC</div>',
-        unsafe_allow_html=True
+    st.header("📄 HỒ SƠ XIN VIỆC")
+
+    st.caption(
+        "Đây là bản xem trước hồ sơ của bạn."
     )
 
-    photo_base64 = image_to_base64(
-        st.session_state.photo
-    )
+    # -----------------------------------------------------
+    # PHẦN ĐẦU CV
+    # -----------------------------------------------------
 
-    if photo_base64:
+    with st.container(border=True):
 
-        photo_html = f"""
-        <img
-            src="{photo_base64}"
-            class="cv-photo"
-        >
-        """
+        col_photo, col_name = st.columns([1, 3])
 
-    else:
+        with col_photo:
 
-        photo_html = """
-        <div class="cv-photo"
-             style="
-             display:flex;
-             align-items:center;
-             justify-content:center;
-             background:#f1f5f9;
-             color:#64748b;
-             text-align:center;">
-            CHƯA CÓ<br>ẢNH
-        </div>
-        """
+            if st.session_state.photo_bytes:
 
-    cv_html = f"""
-    <div class="cv-card">
+                st.image(
+                    st.session_state.photo_bytes,
+                    width=180
+                )
 
-        <div class="cv-header">
+            else:
 
-            {photo_html}
+                st.info(
+                    "📷 Chưa có ảnh"
+                )
 
-            <div>
+        with col_name:
 
+            st.markdown(
+                f"""
                 <div class="cv-name">
-                    {safe(st.session_state.full_name) or "HỌ VÀ TÊN"}
+                {html.escape(
+                    st.session_state.full_name
+                    or "HỌ VÀ TÊN"
+                )}
                 </div>
+                """,
+                unsafe_allow_html=True
+            )
 
+            st.markdown(
+                f"""
                 <div class="cv-job">
-                    {safe(st.session_state.job) or "VỊ TRÍ ỨNG TUYỂN"}
+                {html.escape(
+                    st.session_state.job
+                    or "VỊ TRÍ ỨNG TUYỂN"
+                )}
                 </div>
+                """,
+                unsafe_allow_html=True
+            )
 
-                <div class="cv-contact">
+            st.write(
+                f"📱 {st.session_state.phone or 'Chưa cập nhật'}"
+            )
 
-                    📱 {safe(st.session_state.phone) or "Số điện thoại"}<br>
+            st.write(
+                f"📧 {st.session_state.email or 'Chưa cập nhật'}"
+            )
 
-                    📧 {safe(st.session_state.email) or "Email"}<br>
+            st.write(
+                f"📍 {st.session_state.address or 'Chưa cập nhật'}"
+            )
 
-                    📍 {safe(st.session_state.address) or "Địa chỉ"}<br>
+            st.write(
+                f"🎂 {st.session_state.birthday or 'Chưa cập nhật'}"
+            )
 
-                    🎂 {safe(st.session_state.birthday) or "Ngày sinh"}
+            st.write(
+                f"👤 {st.session_state.gender}"
+            )
 
-                </div>
+    # -----------------------------------------------------
+    # MỤC TIÊU
+    # -----------------------------------------------------
 
-            </div>
+    with st.container(border=True):
 
-        </div>
+        st.markdown(
+            '<div class="cv-section">🎯 MỤC TIÊU NGHỀ NGHIỆP</div>',
+            unsafe_allow_html=True
+        )
 
+        if st.session_state.career_goal:
 
-        <div class="cv-section">
+            st.write(
+                st.session_state.career_goal
+            )
 
-            <h3>🎯 MỤC TIÊU NGHỀ NGHIỆP</h3>
+        else:
 
-            <p>
-                {safe(st.session_state.career_goal)
-                or "Chưa cập nhật."}
-            </p>
+            st.info(
+                "Chưa nhập mục tiêu nghề nghiệp."
+            )
 
-        </div>
+    # -----------------------------------------------------
+    # GIỚI THIỆU
+    # -----------------------------------------------------
 
+    with st.container(border=True):
 
-        <div class="cv-section">
+        st.markdown(
+            '<div class="cv-section">✨ GIỚI THIỆU BẢN THÂN</div>',
+            unsafe_allow_html=True
+        )
 
-            <h3>✨ GIỚI THIỆU BẢN THÂN</h3>
+        if st.session_state.about:
 
-            <p>
-                {safe(st.session_state.about)
-                or "Chưa cập nhật."}
-            </p>
+            st.write(
+                st.session_state.about
+            )
 
-        </div>
+        else:
 
+            st.info(
+                "Chưa nhập giới thiệu bản thân."
+            )
 
-        <div class="cv-section">
+    # -----------------------------------------------------
+    # HỌC VẤN
+    # -----------------------------------------------------
 
-            <h3>🎓 HỌC VẤN</h3>
+    with st.container(border=True):
 
-            <p>
-                <b>{safe(st.session_state.school)
-                or "Chưa cập nhật"}</b>
-            </p>
+        st.markdown(
+            '<div class="cv-section">🎓 HỌC VẤN</div>',
+            unsafe_allow_html=True
+        )
 
-            <p>
-                Chuyên ngành:
-                {safe(st.session_state.major)
-                or "Chưa cập nhật"}
-            </p>
+        st.markdown(
+            f"### {st.session_state.school or 'Chưa cập nhật'}"
+        )
 
-            <p>
-                Thời gian:
-                {safe(st.session_state.education_time)
-                or "Chưa cập nhật"}
-            </p>
+        st.write(
+            f"**Chuyên ngành:** "
+            f"{st.session_state.major or 'Chưa cập nhật'}"
+        )
 
-            <p>
-                GPA:
-                {st.session_state.gpa:.1f}/4.0
-            </p>
+        st.write(
+            f"**Thời gian:** "
+            f"{st.session_state.education_time or 'Chưa cập nhật'}"
+        )
 
-        </div>
+        st.write(
+            f"**GPA:** "
+            f"{st.session_state.gpa:.1f}/4.0"
+        )
 
+    # -----------------------------------------------------
+    # KINH NGHIỆM
+    # -----------------------------------------------------
 
-        <div class="cv-section">
+    with st.container(border=True):
 
-            <h3>💼 KINH NGHIỆM LÀM VIỆC</h3>
+        st.markdown(
+            '<div class="cv-section">💼 KINH NGHIỆM LÀM VIỆC</div>',
+            unsafe_allow_html=True
+        )
 
-            <p>
-                {safe(st.session_state.experience)
-                or "Chưa cập nhật."}
-            </p>
+        if st.session_state.experience:
 
-        </div>
+            st.write(
+                st.session_state.experience
+            )
 
+        else:
 
-        <div class="cv-section">
+            st.info(
+                "Chưa nhập kinh nghiệm."
+            )
 
-            <h3>🛠️ KỸ NĂNG</h3>
+    # -----------------------------------------------------
+    # KỸ NĂNG
+    # -----------------------------------------------------
 
-            <p>
-                {safe(st.session_state.skills)
-                or "Chưa cập nhật."}
-            </p>
+    with st.container(border=True):
 
-        </div>
+        st.markdown(
+            '<div class="cv-section">🛠️ KỸ NĂNG</div>',
+            unsafe_allow_html=True
+        )
 
+        if st.session_state.skills:
 
-        <div class="cv-section">
+            st.write(
+                st.session_state.skills
+            )
 
-            <h3>🌐 NGOẠI NGỮ</h3>
+        else:
 
-            <p>
-                {safe(st.session_state.languages)
-                or "Chưa cập nhật."}
-            </p>
+            st.info(
+                "Chưa nhập kỹ năng."
+            )
 
-        </div>
+    # -----------------------------------------------------
+    # NGOẠI NGỮ
+    # -----------------------------------------------------
 
+    with st.container(border=True):
 
-        <div class="cv-section">
+        st.markdown(
+            '<div class="cv-section">🌐 NGOẠI NGỮ</div>',
+            unsafe_allow_html=True
+        )
 
-            <h3>📜 CHỨNG CHỈ</h3>
+        if st.session_state.languages:
 
-            <p>
-                {safe(st.session_state.certificates)
-                or "Chưa cập nhật."}
-            </p>
+            st.write(
+                st.session_state.languages
+            )
 
-        </div>
+        else:
 
+            st.info(
+                "Chưa nhập ngoại ngữ."
+            )
 
-        <div class="cv-section">
+    # -----------------------------------------------------
+    # CHỨNG CHỈ
+    # -----------------------------------------------------
 
-            <h3>🏆 THÀNH TÍCH</h3>
+    with st.container(border=True):
 
-            <p>
-                {safe(st.session_state.achievements)
-                or "Chưa cập nhật."}
-            </p>
+        st.markdown(
+            '<div class="cv-section">📜 CHỨNG CHỈ</div>',
+            unsafe_allow_html=True
+        )
 
-        </div>
+        if st.session_state.certificates:
 
+            st.write(
+                st.session_state.certificates
+            )
 
-        <div class="cv-section">
+        else:
 
-            <h3>💰 MỨC LƯƠNG MONG MUỐN</h3>
+            st.info(
+                "Chưa nhập chứng chỉ."
+            )
 
-            <p>
-                <b>
-                    {st.session_state.salary:,.0f}
-                    VNĐ/tháng
-                </b>
-            </p>
+    # -----------------------------------------------------
+    # THÀNH TÍCH
+    # -----------------------------------------------------
 
-        </div>
+    with st.container(border=True):
 
-    </div>
-    """
+        st.markdown(
+            '<div class="cv-section">🏆 THÀNH TÍCH</div>',
+            unsafe_allow_html=True
+        )
 
-    st.markdown(
-        cv_html,
-        unsafe_allow_html=True
-    )
+        if st.session_state.achievements:
+
+            st.write(
+                st.session_state.achievements
+            )
+
+        else:
+
+            st.info(
+                "Chưa nhập thành tích."
+            )
+
+    # -----------------------------------------------------
+    # LƯƠNG
+    # -----------------------------------------------------
+
+    with st.container(border=True):
+
+        st.markdown(
+            '<div class="cv-section">💰 MỨC LƯƠNG MONG MUỐN</div>',
+            unsafe_allow_html=True
+        )
+
+        if st.session_state.salary > 0:
+
+            st.success(
+                f"{st.session_state.salary:,.0f} VNĐ/tháng"
+            )
+
+        else:
+
+            st.info(
+                "Chưa nhập mức lương mong muốn."
+            )
+
+    # -----------------------------------------------------
+    # TẢI NỘI DUNG
+    # -----------------------------------------------------
 
     st.divider()
 
-    st.subheader("📥 TẢI HỒ SƠ")
+    st.subheader("📥 LƯU HỒ SƠ")
 
     st.info(
-        "Bạn có thể dùng chức năng in của trình duyệt "
-        "để lưu hồ sơ thành PDF."
+        "Bạn có thể sử dụng chức năng In/Print của trình duyệt "
+        "để lưu bản hồ sơ này thành PDF."
     )
 
-    # Tạo phiên bản HTML tải xuống
-    download_html = f"""
-<!DOCTYPE html>
-<html lang="vi">
-
-<head>
-
-<meta charset="UTF-8">
-
-<title>
-{safe(st.session_state.full_name) or "Ho so xin viec"}
-</title>
-
-<style>
-
-body {{
-    font-family: Arial, sans-serif;
-    background: #f3f4f6;
-    margin: 0;
-    padding: 30px;
-}}
-
-.cv {{
-    max-width: 850px;
-    margin: auto;
-    background: white;
-    padding: 40px;
-}}
-
-.header {{
-    display:flex;
-    gap:25px;
-    align-items:center;
-    border-bottom:2px solid #111;
-    padding-bottom:20px;
-}}
-
-.photo {{
-    width:140px;
-    height:170px;
-    object-fit:cover;
-}}
-
-h1 {{
-    margin:0;
-}}
-
-h2 {{
-    border-bottom:2px solid #222;
-    padding-bottom:5px;
-    margin-top:25px;
-}}
-
-p {{
-    line-height:1.7;
-    white-space:pre-line;
-}}
-
-</style>
-
-</head>
-
-<body>
-
-<div class="cv">
-
-<div class="header">
-
-{
-    f'<img src="{photo_base64}" class="photo">'
-    if photo_base64
-    else ''
-}
-
-<div>
-
-<h1>
-{safe(st.session_state.full_name) or "HỌ VÀ TÊN"}
-</h1>
-
-<h3>
-{safe(st.session_state.job) or "VỊ TRÍ ỨNG TUYỂN"}
-</h3>
-
-<p>
-📱 {safe(st.session_state.phone)}<br>
-📧 {safe(st.session_state.email)}<br>
-📍 {safe(st.session_state.address)}<br>
-🎂 {safe(st.session_state.birthday)}
-</p>
-
-</div>
-
-</div>
-
-
-<h2>🎯 MỤC TIÊU NGHỀ NGHIỆP</h2>
-
-<p>
-{safe(st.session_state.career_goal)}
-</p>
-
-
-<h2>✨ GIỚI THIỆU BẢN THÂN</h2>
-
-<p>
-{safe(st.session_state.about)}
-</p>
-
-
-<h2>🎓 HỌC VẤN</h2>
-
-<p>
-<b>{safe(st.session_state.school)}</b>
-
-Chuyên ngành:
-{safe(st.session_state.major)}
-
-Thời gian:
-{safe(st.session_state.education_time)}
-
-GPA:
-{st.session_state.gpa:.1f}/4.0
-</p>
-
-
-<h2>💼 KINH NGHIỆM</h2>
-
-<p>
-{safe(st.session_state.experience)}
-</p>
-
-
-<h2>🛠️ KỸ NĂNG</h2>
-
-<p>
-{safe(st.session_state.skills)}
-</p>
-
-
-<h2>🌐 NGOẠI NGỮ</h2>
-
-<p>
-{safe(st.session_state.languages)}
-</p>
-
-
-<h2>📜 CHỨNG CHỈ</h2>
-
-<p>
-{safe(st.session_state.certificates)}
-</p>
-
-
-<h2>🏆 THÀNH TÍCH</h2>
-
-<p>
-{safe(st.session_state.achievements)}
-</p>
-
-
-<h2>💰 MỨC LƯƠNG MONG MUỐN</h2>
-
-<p>
-<b>{st.session_state.salary:,.0f} VNĐ/tháng</b>
-</p>
-
-</div>
-
-</body>
-
-</html>
-"""
-
-    st.download_button(
-        label="📥 TẢI HỒ SƠ XIN VIỆC",
-        data=download_html,
-        file_name="ho_so_xin_viec.html",
-        mime="text/html",
+    if st.button(
+        "🖨️ IN / LƯU HỒ SƠ PDF",
         use_container_width=True
-    )
+    ):
 
-    st.caption(
-        "Sau khi tải file HTML, mở file bằng trình duyệt "
-        "→ chọn In/Print → Save as PDF để có CV PDF."
-    )
+        st.components.v1.html(
+            """
+            <script>
+            window.print();
+            </script>
+            """,
+            height=0
+        )
 
 
 # =========================================================
 # FOOTER
 # =========================================================
 
-st.markdown(
-    """
-    <div class="footer">
-    💼 JOBMATE – Hồ sơ xin việc thông minh<br>
-    Mini App phục vụ học tập môn Tài chính / Ngân hàng
-    </div>
-    """,
-    unsafe_allow_html=True
+st.divider()
+
+st.caption(
+    "💼 JOBMATE – Mini App Hồ sơ xin việc thông minh | "
+    "Dự án học tập môn Tài chính / Ngân hàng"
 )
